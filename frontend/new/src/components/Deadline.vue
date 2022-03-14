@@ -8,13 +8,12 @@
         <alert :message=message v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" v-b-modal.add-modal>Add</button>
         <b style="word-space:2em">&nbsp;&nbsp;</b>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.add-modal>Sync</button>
+        <button type="button" class="btn btn-success btn-sm" v-b-modal.sync-modal>Sync</button>
         <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Date</th>
               <th scope="col">Time</th>
               <th scope="col">Reminder?</th>
               <th></th>
@@ -23,7 +22,6 @@
           <tbody>
             <tr v-for="(deadline, index) in deadlines" :key="index">
               <td>{{ deadline.name }}</td>
-              <td>{{ deadline.date }}</td>
               <td>{{ deadline.time }}</td>
               <td>
                 <span v-if="deadline.reminder">Yes</span>
@@ -66,20 +64,9 @@
                         required
                         placeholder="Enter Name">
           </b-form-input>
-          <br>
-        </b-form-group>
-        <b-form-group id="form-date-group"
-                      label="Date:"
-                      label-for="form-date-input">
-            <b-form-input id="form-date-input"
-                          type="text"
-                          v-model="addForm.author"
-                          required
-                          placeholder="Enter Date">
-            </b-form-input>
           </b-form-group>
           <br>
-            <b-form-group id="form-time-group"
+          <b-form-group id="form-time-group"
                       label="Time:"
                       label-for="form-time-input">
             <b-form-input id="form-time-input"
@@ -95,6 +82,41 @@
             <b-form-checkbox value="true"><b style="word-space:1em">&nbsp;&nbsp;</b>Set reminder?</b-form-checkbox>
           </b-form-checkbox-group>
         </b-form-group>
+        <br>
+        <b-button-group>
+          <b-button type="submit" variant="primary">Submit</b-button>
+          <b style="word-space:2em">&nbsp;&nbsp;</b>
+          <b-button type="reset" variant="danger">Reset</b-button>
+        </b-button-group>
+      </b-form>
+      </b-modal>
+    <b-modal ref="syncModal"
+            id="sync-modal"
+            title="Sync with Blackboard"
+            hide-footer>
+      <b-form @submit="onSyncSubmit" @reset="onSyncReset" class="w-100">
+      <b-form-group id="form-username-group"
+                    label="Username:"
+                    label-for="form-username-input">
+          <b-form-input id="form-name-input"
+                        type="text"
+                        v-model="syncForm.username"
+                        required
+                        placeholder="Enter Username">
+          </b-form-input>
+          <br>
+        </b-form-group>
+        <b-form-group id="form-passwd-group"
+                      label="Password:"
+                      label-for="form-passwd-input">
+            <b-form-input id="form-passwd-input"
+                          type="text"
+                          v-model="syncForm.password"
+                          required
+                          placeholder="Enter Password">
+            </b-form-input>
+          </b-form-group>
+          <br>
         <br>
         <b-button-group>
           <b-button type="submit" variant="primary">Submit</b-button>
@@ -118,17 +140,6 @@
                         placeholder="Enter Name">
           </b-form-input>
         </b-form-group>
-        <br>
-        <b-form-group id="form-date-edit-group"
-                      label="Date:"
-                      label-for="form-date-edit-input">
-            <b-form-input id="form-date-edit-input"
-                          type="text"
-                          v-model="editForm.date"
-                          required
-                          placeholder="Enter Date">
-            </b-form-input>
-          </b-form-group>
           <br>
                   <b-form-group id="form-time-edit-group"
                       label="Time:"
@@ -167,7 +178,6 @@ export default {
       deadlines: [],
       addForm: {
         name: '',
-        date: '',
         time: '',
         reminder: [],
       },
@@ -176,9 +186,12 @@ export default {
       editForm: {
         id: '',
         name: '',
-        date: '',
         time: '',
         reminder: [],
+      },
+      syncForm: {
+        username: '',
+        password: '',
       },
     };
   },
@@ -187,7 +200,7 @@ export default {
   },
   methods: {
     getDeadlines() {
-      const path = 'http://127.0.0.1:5000/deadlines';
+      const path = 'api/deadlines';
       axios.get(path)
         .then((res) => {
           this.deadlines = res.data.deadlines;
@@ -198,7 +211,7 @@ export default {
         });
     },
     addDeadline(payload) {
-      const path = 'http://127.0.0.1:5000/deadlines';
+      const path = 'api/deadlines';
       axios.post(path, payload)
         .then(() => {
           this.getDeadlines();
@@ -212,24 +225,23 @@ export default {
         });
     },
     initForm() {
-      this.addBookForm.name = '';
-      this.addBookForm.date = '';
-      this.addBookForm.time = '';
-      this.addBookForm.reminder = [];
+      this.addForm.name = '';
+      this.addForm.time = '';
+      this.addForm.reminder = [];
       this.editForm.id = '';
-      this.editBookForm.name = '';
-      this.editBookForm.date = '';
-      this.editBookForm.time = '';
-      this.editBookForm.reminder = [];
+      this.editForm.name = '';
+      this.editForm.time = '';
+      this.editForm.reminder = [];
+      this.syncForm.username = '';
+      this.syncForm.password = '';
     },
     onSubmit(evt) {
       evt.preventDefault();
       this.$refs.addModal.hide();
       let reminder = false;
-      if (this.addForm.reminder[0]) reminder = true;
+      if (this.addForm.reminder[0]) reminder = 1;
       const payload = {
         name: this.addForm.name,
-        date: this.addForm.date,
         time: this.addForm.time,
         reminder,
       };
@@ -241,6 +253,35 @@ export default {
       this.$refs.addModal.hide();
       this.initForm();
     },
+    onSyncSubmit(evt) {
+      evt.preventDefault();
+      this.$refs.syncModal.hide();
+      const payload = {
+        username: this.syncForm.username,
+        password: this.syncForm.password,
+      };
+      this.syncDeadline(payload);
+      this.initForm();
+    },
+    syncDeadline(payload) {
+      const path = 'api/deadlines/sync';
+      axios.put(path, payload)
+        .then(() => {
+          this.getDeadlines();
+          this.message = 'Deadline Synced';
+          this.showMessage = true;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error);
+          this.getDeadlines();
+        });
+    },
+    onSyncReset(evt) {
+      evt.preventDefault();
+      this.$refs.syncModal.hide();
+      this.initForm();
+    },
     editDeadline(deadline) {
       this.editForm = deadline;
     },
@@ -248,17 +289,16 @@ export default {
       evt.preventDefault();
       this.$refs.editModal.hide();
       let reminder = false;
-      if (this.editForm.reminder[0]) reminder = true;
+      if (this.editForm.reminder[0]) reminder = 1;
       const payload = {
         name: this.editForm.name,
-        date: this.editForm.date,
         time: this.editForm.time,
         reminder,
       };
       this.updateDeadline(payload, this.editForm.id);
     },
     updateDeadline(payload, ID) {
-      const path = `http://127.0.0.1:5000/deadlines/${ID}`;
+      const path = `api/deadlines/${ID}`;
       axios.put(path, payload)
         .then(() => {
           this.getDeadlines();
@@ -278,7 +318,7 @@ export default {
       this.getDeadlines();
     },
     removeDeadline(ID) {
-      const path = `http://127.0.0.1:5000/deadlines/${ID}`;
+      const path = `api/deadlines/${ID}`;
       axios.delete(path)
         .then(() => {
           this.getDeadlines();

@@ -1,17 +1,20 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS deadline;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  username VARCHAR(30) UNIQUE NOT NULL,
+  password VARCHAR(30) NOT NULL,
+  verified BIT,
+  ver_code INTEGER
 );
 
-CREATE TABLE post (
+CREATE TABLE deadline (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  title TEXT NOT NULL,
-  body TEXT NOT NULL,
-  FOREIGN KEY (author_id) REFERENCES user (id)
+  name VARCHAR(30) NOT NULL,
+  time DATETIME NOT NULL,
+  from_bb BIT,
+  set_reminder BIT,
+  user_id INTEGER,
+  FOREIGN KEY (user_id) REFERENCES user (id)
 );

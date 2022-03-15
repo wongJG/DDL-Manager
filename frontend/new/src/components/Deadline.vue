@@ -48,6 +48,9 @@
             </tr>
           </tbody>
         </table>
+      <br>
+      <br>
+      <calendar :deadline="deadlines"></calendar>
       </div>
     </div>
     <b-modal ref="addModal"
@@ -122,6 +125,8 @@
           <b-button type="submit" variant="primary">Submit</b-button>
           <b style="word-space:2em">&nbsp;&nbsp;</b>
           <b-button type="reset" variant="danger">Reset</b-button>
+          <b style="word-space:2em">&nbsp;&nbsp;</b>
+          <p v-if="show_waiting_sign"> loading...</p>
         </b-button-group>
       </b-form>
     </b-modal>
@@ -171,6 +176,7 @@
 <script>
 import axios from 'axios';
 import Alert from './Alert.vue';
+import Calendar from './Calendar.vue';
 
 export default {
   data() {
@@ -183,6 +189,7 @@ export default {
       },
       message: '',
       showMessage: false,
+      show_waiting_sign: false,
       editForm: {
         id: '',
         name: '',
@@ -197,6 +204,7 @@ export default {
   },
   components: {
     alert: Alert,
+    Calendar,
   },
   methods: {
     getDeadlines() {
@@ -255,7 +263,7 @@ export default {
     },
     onSyncSubmit(evt) {
       evt.preventDefault();
-      this.$refs.syncModal.hide();
+      this.show_waiting_sign = true;
       const payload = {
         username: this.syncForm.username,
         password: this.syncForm.password,
@@ -267,11 +275,13 @@ export default {
       const path = 'api/deadlines/sync';
       axios.put(path, payload)
         .then(() => {
+          this.$refs.syncModal.hide();
           this.getDeadlines();
           this.message = 'Deadline Synced';
           this.showMessage = true;
         })
         .catch((error) => {
+          this.$refs.syncModal.hide();
           // eslint-disable-next-line
           console.error(error);
           this.getDeadlines();

@@ -1,17 +1,6 @@
-import uuid
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import sqlite3
-
-Deadlines = [
-    {
-        'id': uuid.uuid4().hex,
-        'name': 'Assignment-1',
-        'date': '2022-03-01',
-        'time': '17:00',
-        'Reminder': False,
-    },
-]
 
 # configuration
 DEBUG = True
@@ -43,9 +32,13 @@ def get_all_deadline():
     c = conn.cursor()
     c.execute('select id, name, time, set_reminder as reminder from deadline where time > DATE() order by time;')
     result = [dict(i) for i in c.fetchall()]
+
+    c.execute('select id, name as title, time as date from deadline where time > DATE() order by time;')
+    result2 = [dict(i) for i in c.fetchall()]
+
     conn.close()
 
-    return result
+    return result, result2
 
 def add_deadline(name,time,set_reminder):
 
@@ -76,11 +69,14 @@ def all():
     
     # Get deadlines
     else:
-        Deadlines = get_all_deadline()
+        Deadlines,Deadlines_events = get_all_deadline()
         response_object['deadlines'] = Deadlines
+        response_object['deadlines_event'] = Deadlines_events
     
 
     return jsonify(response_object)
+
+
 
 
 @app.route('/deadlines/<deadline_id>', methods=['PUT', 'DELETE'])

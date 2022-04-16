@@ -4,12 +4,12 @@
     <div class="row">
       <div class="col-sm-10">
         <h1> Deadlines </h1>
-        <hr><br><br>
+        <hr><br>
         <alert :message=message v-if="showMessage"></alert>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.add-modal>Add</button>
+        <b-button variant="outline-primary" v-b-modal.add-modal>Add</b-button>
         <b style="word-space:2em">&nbsp;&nbsp;</b>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.sync-modal>Sync</button>
-        <br><br>
+        <b-button variant="outline-primary" v-b-modal.sync-modal>Sync</b-button>
+        <!-- <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
@@ -33,30 +33,28 @@
                           type="button"
                           class="btn btn-warning btn-sm"
                           v-b-modal.update-modal
-                          @click="editDeadline(deadline)">
+                          @click="editDeadline(deadline.id)">
                       Update
-                  </button>
-                  <b style="word-space:2em">&nbsp;&nbsp;</b>
-                  <button
-                          type="button"
-                          class="btn btn-danger btn-sm"
-                          @click="onDeleteDeadline(deadline)">
-                      Delete
                   </button>
                 </div>
               </td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
       <br>
       <br>
-      <calendar :deadline="deadlines"></calendar>
+      <calendar ref="calendar" :deadline="deadlines"></calendar>
+      <br>
+      <br>
+      <br>
+      <br>
       </div>
     </div>
     <b-modal ref="addModal"
             id="add-modal"
             title="Add a new deadline"
-            hide-footer>
+            hide-footer
+            hide-header>
       <b-form @submit="onSubmit" @reset="onReset" class="w-100">
       <b-form-group id="form-name-group"
                     label="Name:"
@@ -72,12 +70,13 @@
           <b-form-group id="form-time-group"
                       label="Time:"
                       label-for="form-time-input">
-            <b-form-input id="form-time-input"
+            <!-- <b-form-input id="form-time-input"
                           type="text"
                           v-model="addForm.time"
                           required
                           placeholder="Enter Time">
-            </b-form-input>
+            </b-form-input> -->
+            <date-picker v-model='addForm.time' :config='dateOptions'></date-picker>
           </b-form-group>
           <br>
         <b-form-group id="form-reminder-group">
@@ -87,16 +86,17 @@
         </b-form-group>
         <br>
         <b-button-group>
-          <b-button type="submit" variant="primary">Submit</b-button>
+          <b-button type="submit" variant="outline-primary">Submit</b-button>
           <b style="word-space:2em">&nbsp;&nbsp;</b>
-          <b-button type="reset" variant="danger">Reset</b-button>
+          <b-button type="reset" variant="outline-danger">Reset</b-button>
         </b-button-group>
       </b-form>
       </b-modal>
     <b-modal ref="syncModal"
             id="sync-modal"
             title="Sync with Blackboard"
-            hide-footer>
+            hide-footer
+            hide-header>
       <b-form @submit="onSyncSubmit" @reset="onSyncReset" class="w-100">
       <b-form-group id="form-username-group"
                     label="Username:"
@@ -122,19 +122,20 @@
           <br>
         <br>
         <b-button-group>
-          <b-button type="submit" variant="primary">Submit</b-button>
+          <b-button type="submit" variant="outline-primary">Submit</b-button>
           <b style="word-space:2em">&nbsp;&nbsp;</b>
-          <b-button type="reset" variant="danger">Reset</b-button>
+          <b-button type="reset" variant="outline-danger">Reset</b-button>
           <b style="word-space:2em">&nbsp;&nbsp;</b>
-          <p v-if="show_waiting_sign"> loading...</p>
+          <loading v-if="show_waiting_sign"> </loading>
         </b-button-group>
       </b-form>
     </b-modal>
     <b-modal ref="editModal"
             id="update-modal"
             title="Update"
-            hide-footer>
-      <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
+            hide-footer
+            hide-header>
+      <b-form @submit="onSubmitUpdate" @reset="onDeleteDeadline" class="w-100">
       <b-form-group id="form-name-edit-group"
                     label="Name:"
                     label-for="form-name-edit-input">
@@ -146,16 +147,12 @@
           </b-form-input>
         </b-form-group>
           <br>
-                  <b-form-group id="form-time-edit-group"
-                      label="Time:"
-                      label-for="form-time-edit-input">
-            <b-form-input id="form-time-edit-input"
-                          type="text"
-                          v-model="editForm.time"
-                          required
-                          placeholder="Enter Time">
-            </b-form-input>
-          </b-form-group>
+          <b-form-group id="form-name-edit-group"
+                    label="Time:"
+                    label-for="form-time-edit-input">
+          <date-picker v-model='editForm.time' :config='dateOptions'></date-picker>
+        </b-form-group>
+          <!-- <CustomDateTimePicker /> -->
           <br>
         <b-form-group id="form-reminder-edit-group">
           <b-form-checkbox-group v-model="editForm.reminder" id="form-checks">
@@ -164,9 +161,9 @@
         </b-form-group>
         <br>
         <b-button-group>
-          <b-button type="submit" variant="primary">Update</b-button>
+          <b-button type="submit" variant="outline-primary">Update</b-button>
           <b style="word-space:2em">&nbsp;&nbsp;</b>
-          <b-button type="reset" variant="danger">Cancel</b-button>
+          <b-button type="reset" variant="outline-danger">Delete</b-button>
         </b-button-group>
       </b-form>
     </b-modal>
@@ -174,9 +171,15 @@
 </template>
 
 <script>
+import 'bootstrap/dist/css/bootstrap.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+import datePicker from 'vue-bootstrap-datetimepicker';
 import axios from 'axios';
 import Alert from './Alert.vue';
 import Calendar from './Calendar.vue';
+import Loading from './loading.vue';
+// import CustomDateTimePicker from './date-timepicker.vue';
 
 export default {
   data() {
@@ -200,11 +203,28 @@ export default {
         username: '',
         password: '',
       },
+      dateOptions: {
+        format: 'YYYY-MM-DD hh:mm:ss',
+        useCurrent: false,
+        icons: {
+          time: 'far fa-clock',
+          date: 'far fa-calendar',
+          up: 'fas fa-arrow-up',
+          down: 'fas fa-arrow-down',
+          previous: 'fas fa-chevron-left',
+          next: 'fas fa-chevron-right',
+          today: 'fas fa-calendar-check',
+          clear: 'far fa-trash-alt',
+          close: 'far fa-times-circle',
+        },
+      },
     };
   },
   components: {
     alert: Alert,
     Calendar,
+    loading: Loading,
+    datePicker,
   },
   methods: {
     getDeadlines() {
@@ -212,6 +232,7 @@ export default {
       axios.get(path)
         .then((res) => {
           this.deadlines = res.data.deadlines;
+          this.$refs.calendar.refresh(res.data.deadlines);
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -292,10 +313,16 @@ export default {
       this.$refs.syncModal.hide();
       this.initForm();
     },
-    editDeadline(deadline) {
-      this.editForm = deadline;
+    editDeadline(id) {
+      for (let i = 0; i < this.deadlines.length; i += 1) {
+        if (this.deadlines[i].id === Number(id)) {
+          this.editForm = this.deadlines[i];
+          break;
+        }
+      }
     },
     onSubmitUpdate(evt) {
+      console.log(this.editForm.time);
       evt.preventDefault();
       this.$refs.editModal.hide();
       let reminder = false;
@@ -341,8 +368,10 @@ export default {
           this.getDeadlines();
         });
     },
-    onDeleteDeadline(deadline) {
-      this.removeDeadline(deadline.id);
+    onDeleteDeadline(evt) {
+      evt.preventDefault();
+      this.$refs.editModal.hide();
+      this.removeDeadline(this.editForm.id);
     },
   },
   created() {

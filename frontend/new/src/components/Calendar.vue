@@ -9,7 +9,7 @@ export default {
     deadline: Array,
   },
   components: {
-    FullCalendar, // make the <FullCalendar> tag available
+    FullCalendar,
   },
   data() {
     return {
@@ -18,28 +18,26 @@ export default {
         initialView: 'dayGridMonth',
         defaultTimedEventDuration: '00:00',
         events: [],
+        eventClick: this.handleEventClick,
       },
     };
   },
   methods: {
-    onClick() {
-      const cal = this.deadline.map(({ name: title, time: start }) => ({ title, start }));
-      // console.log(JSON.stringify(cal));
+    refresh(deadline) {
+      const cal = deadline.map(({ id, name: title, time: start }) => ({ id, title, start }));
       this.calendarOptions.events = cal;
     },
-  },
-  async mounted() {
-    const cal = this.deadline.map(({ name: title, time: start }) => ({ title, start }));
-    console.log(JSON.stringify(cal));
-    this.calendarOptions.events = cal;
+    handleEventClick(event) {
+      // console.log(event.event.id);
+      this.$parent.$bvModal.show('update-modal');
+      this.$parent.editDeadline(event.event.id);
+    },
   },
 };
 </script>
 
 <template>
   <div>
-  <button type="button" class="btn btn-success btn-sm" @click="onClick">Refresh</button>
-  <br><br>
   <FullCalendar :options="calendarOptions" />
   </div>
 </template>

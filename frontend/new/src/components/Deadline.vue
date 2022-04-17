@@ -230,9 +230,10 @@ export default {
   methods: {
     getDeadlines() {
       // eslint-disable-next-line
-      console.log(this.user = this.$store.state.userEmail);
       const path = 'api/deadlines';
-      axios.get(path)
+      console.log(this.$store.state.userid);
+      const payload = { id: this.$store.state.userid };
+      axios.post(path, payload)
         .then((res) => {
           this.deadlines = res.data.deadlines;
           this.$refs.calendar.refresh(res.data.deadlines);
@@ -243,7 +244,7 @@ export default {
         });
     },
     addDeadline(payload) {
-      const path = 'api/deadlines';
+      const path = 'api/add-deadline';
       axios.post(path, payload)
         .then(() => {
           this.getDeadlines();
@@ -273,6 +274,7 @@ export default {
       let reminder = false;
       if (this.addForm.reminder[0]) reminder = 1;
       const payload = {
+        id: this.$store.state.userid,
         name: this.addForm.name,
         time: this.addForm.time,
         reminder,
@@ -289,6 +291,7 @@ export default {
       evt.preventDefault();
       this.show_waiting_sign = true;
       const payload = {
+        id: this.$store.state.userid,
         username: this.syncForm.username,
         password: this.syncForm.password,
       };
@@ -331,6 +334,7 @@ export default {
       let reminder = false;
       if (this.editForm.reminder[0]) reminder = 1;
       const payload = {
+        id: this.$store.state.userid,
         name: this.editForm.name,
         time: this.editForm.time,
         reminder,

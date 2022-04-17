@@ -30,26 +30,26 @@ def ping_pong():
     return jsonify('pong!')
 
 
-def get_all_deadline():
+def get_all_deadline(id):
 
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute('select id, name, time, set_reminder as reminder from deadline where time > DATE() order by time;')
+    c.execute('select id, name, time, set_reminder, user_id as reminder from deadline where time > DATE() and user_id = %d order by time;' % id)
     result = [dict(i) for i in c.fetchall()]
 
-    c.execute('select id, name as title, time as date from deadline where time > DATE() order by time;')
+    c.execute('select id, name as title, time as date, user_id from deadline where time > DATE() and user_id = %d order by time;' % id)
     result2 = [dict(i) for i in c.fetchall()]
 
     conn.close()
 
     return result, result2
 
-def add_deadline(name,time,set_reminder):
+def add_deadline(user_id, name,time,set_reminder):
 
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("INSERT INTO deadline (name,time,from_bb,set_reminder,user_id) VALUES ('%s', '%s', 0, %s, 10)" % (name,time,set_reminder))
+    c.execute("INSERT INTO deadline (name,time,from_bb,set_reminder,user_id) VALUES ('%s', '%s', 0, %s, %d)" % (name,time,set_reminder,user_id))
     conn.commit()
     conn.close()
 
@@ -62,22 +62,27 @@ def remove_deadline(deadline_id):
     conn.close()
 
 
-@app.route('/deadlines', methods=['GET', 'POST'])
-def all():
+@app.route('/add-deadline', methods=['POST'])
+def handleaddDeadline():
 
     # Add deadlines
     response_object = {'status': 'success'}
-    if request.method == 'POST':
-        post_data = request.get_json()
-        add_deadline(post_data.get('name'),post_data.get('time'),post_data.get('reminder'))
-        response_object['message'] = 'Deadline added'
+    # if request.method == 'POST':
+    post_data = request.get_json()
+    add_deadline(post_data.get('id'),post_data.get('name'),post_data.get('time'),post_data.get('reminder'))
+    response_object['message'] = 'Deadline added'
     
-    # Get deadlines
-    else:
-        Deadlines,Deadlines_events = get_all_deadline()
-        response_object['deadlines'] = Deadlines
-        response_object['deadlines_event'] = Deadlines_events
-    
+    return jsonify(response_object)
+
+
+@app.route('/deadlines', methods=['POST'])
+def handlegetDeadline():
+
+    response_object = {'status': 'success'}
+    post_data = request.get_json()
+    Deadlines,Deadlines_events = get_all_deadline(post_data.get('id'))
+    response_object['deadlines'] = Deadlines
+    response_object['deadlines_event'] = Deadlines_events
 
     return jsonify(response_object)
 
@@ -92,7 +97,7 @@ def single(deadline_id):
     if request.method == 'PUT':
         post_data = request.get_json()
         remove_deadline(deadline_id)
-        add_deadline(post_data.get('name'),post_data.get('time'),post_data.get('reminder'))
+        add_deadline(post_data.get('id'),post_data.get('name'),post_data.get('time'),post_data.get('reminder'))
         response_object['message'] = 'Deadline updated'
 
     # Delete deadline
@@ -107,7 +112,7 @@ def sync():
     from getCalendar import syncDeadlines
     response_object = {'status': 'success'}
     post_data = request.get_json()
-    syncDeadlines(post_data.get('username'),post_data.get('password')) 
+    syncDeadlines(post_data.get('id'), post_data.get('username'),post_data.get('password')) 
     response_object['message'] = 'Deadline synced'
     return jsonify(response_object)
 
@@ -141,8 +146,7 @@ def login():
     else: 
         response_object['message'] = 'Logged in'
         response_object['userid'] = auth[0]['id']
-
-    print(response_object['message'])
+        print(response_object['userid'])
 
     return jsonify(response_object)
 

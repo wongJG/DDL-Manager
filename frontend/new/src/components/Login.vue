@@ -53,7 +53,8 @@ export default {
         .then((res) => {
           this.showMessage = true;
           this.message = res.data.message;
-          if (res.data.message === 'Logged in') this.$emit('TheLogin::loginResult', { loginResult: true, id: res.data.userid });
+          this.$store.state.userid = res.data.userid;
+          if (res.data.message === 'Logged in') this.$emit('TheLogin::loginResult', { loginResult: true });
         })
         .catch((error) => {
           // eslint-disable-next-line

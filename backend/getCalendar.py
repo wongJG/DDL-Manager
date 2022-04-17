@@ -73,25 +73,25 @@ class Conv():
             self.data.append(data_row)  
 
                         
-    def write_sql(self,stu_id):
+    def write_sql(self,id):
         
         connection = sqlite3.connect("test.db")
         cursor = connection.cursor()
 
-        cursor.execute("DELETE FROM deadline where user_id = %s and from_bb = 1" % stu_id)
+        cursor.execute("DELETE FROM deadline where user_id = %s and from_bb = 1" % id)
 
         for line in self.data:
-            cursor.execute("INSERT INTO deadline (name,time,from_bb,set_reminder,user_id) VALUES ('%s', '%s', 1, 0, %s)" % (line[0],line[1][:line[1].find('+')],stu_id))
+            cursor.execute("INSERT INTO deadline (name,time,from_bb,set_reminder,user_id) VALUES ('%s', '%s', 1, 0, %d)" % (line[0],line[1][:line[1].find('+')],id))
         
         connection.commit()
         connection.close()
 
 
-def syncDeadlines(stu_id,passwd):
+def syncDeadlines(id, stu_id,passwd):
     
     blackboardGetCalendar(stu_id,passwd,'https://bb.cuhk.edu.cn')
     conv = Conv()
     conv.read_calendar('learn.ics')
     conv.conv_to()
-    conv.write_sql(stu_id)
+    conv.write_sql(id)
     os.remove('learn.ics')

@@ -25,9 +25,9 @@ export default {
     },
   },
   methods: {
-    handleLoginResult({ loginResult, userid }) {
+    handleLoginResult({ loginResult }) {
       this.$store.state.islogin = loginResult;
-      this.$store.state.userid = userid;
+      // this.$store.state.userid = userid;
     },
   },
 };

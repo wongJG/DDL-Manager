@@ -6,7 +6,8 @@ DROP TABLE IF EXISTS verification;
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username VARCHAR(30) UNIQUE NOT NULL,
-  password VARCHAR(30) NOT NULL
+  password VARCHAR(30) NOT NULL,
+  photoLink VARCHAR(100)
 );
 
 CREATE TABLE verification (

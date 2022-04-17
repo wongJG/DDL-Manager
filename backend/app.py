@@ -1,11 +1,10 @@
-from urllib import response
-from click import password_option
+from curses import newpad
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import sqlite3
 import random
-from matplotlib import use
-from sympy import re
+
+from psutil import users
 
 # configuration
 DEBUG = True
@@ -136,10 +135,10 @@ def login():
     response_object = {'status': 'success'}
     post_data = request.get_json()
     auth = authinfo(post_data.get('username'))
-
+    print(auth[0]['password'])
     if (len(auth)==0):
         response_object['message'] = 'No such User'
-    
+
     elif (auth[0]['password'] != post_data.get('password')):
         response_object['message'] = 'Wrong Password'
 
@@ -230,6 +229,88 @@ def handleRegister():
 
     return jsonify(response_object)
 
+
+'''Change Password'''
+
+@app.route('/changePass', methods=['POST'])
+def changPass():
+    
+    response_object = {'status': 'success'}
+    post_data = request.get_json()
+    id = post_data.get('id')
+    oldPass = post_data.get('oldPass')
+    newPass = post_data.get('newPass')
+
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("select id, password from user where id = %d;" % id )
+    fetch_oldPass = [dict(i) for i in c.fetchall()][0]['password']
+
+    if (fetch_oldPass != oldPass):
+        response_object['message'] = 'Old Password does NOT match'
+
+    else:
+        c.execute("Update user set password='%s' where id = %d;" % (newPass,int(id)) )
+        conn.commit()
+        response_object['message'] =  'Password Updated'
+
+    conn.close()
+
+    print(response_object['message'])
+
+    return jsonify(response_object)
+
+
+
+'''User Management'''
+
+@app.route('/users', methods=['GET'])
+def getAllUsers():
+
+    response_object = {'status': 'success'}
+
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute('select id, username from user order by id;')
+    users = [dict(i) for i in c.fetchall()]
+    conn.close()
+
+    response_object['users'] = users
+
+    return jsonify(response_object)
+
+@app.route('/users/<user_id>', methods=['POST', 'DELETE'])
+def singleUser(user_id):
+    
+    response_object = {'status': 'success'}
+
+    # Update User
+    if request.method == 'POST':
+        post_data = request.get_json()
+        newPass = post_data.get('newPassword')
+        conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("Update user set password='%s' where id = %d;" % (newPass,int(user_id)))
+        # print("Update user set password='%s' where id = %d;" % (newPass,int(user_id)))
+        conn.commit()
+        conn.close()
+        response_object['message'] = 'User updated'
+
+    # Delete deadline
+    if request.method == 'DELETE':
+        conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("Delete From user where id = %d;" % int(user_id))
+        conn.commit()
+        conn.close()
+        response_object['message'] = 'User removed'
+    
+    return jsonify(response_object)
 
 
 if __name__ == '__main__':

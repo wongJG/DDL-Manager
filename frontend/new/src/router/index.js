@@ -4,7 +4,8 @@ import Deadline from '../components/Deadline.vue';
 // import Calendar from '../components/Calendar.vue';
 import Project from '../components/Project.vue';
 import Register from '../components/Register.vue';
-
+import Settings from '../components/Settings.vue';
+import Admin from '../components/Admin.vue';
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,16 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register,
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
   },
   {
     path: '/project',

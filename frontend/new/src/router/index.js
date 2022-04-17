@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Deadline from '../components/Deadline.vue';
-import Calendar from '../components/Calendar.vue';
+// import Calendar from '../components/Calendar.vue';
+import Project from '../components/Project.vue';
+import Register from '../components/Register.vue';
+
 
 Vue.use(VueRouter);
 
@@ -12,9 +15,14 @@ const routes = [
     component: Deadline,
   },
   {
-    path: '/c',
-    name: 'calendar',
-    component: Calendar,
+    path: '/register',
+    name: 'Register',
+    component: Register,
+  },
+  {
+    path: '/project',
+    name: 'project',
+    component: Project,
   },
   {
     path: '/about',

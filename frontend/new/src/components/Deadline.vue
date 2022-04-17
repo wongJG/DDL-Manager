@@ -113,7 +113,7 @@
                       label="Password:"
                       label-for="form-passwd-input">
             <b-form-input id="form-passwd-input"
-                          type="text"
+                          type="password"
                           v-model="syncForm.password"
                           required
                           placeholder="Enter Password">
@@ -185,6 +185,7 @@ export default {
   data() {
     return {
       deadlines: [],
+      user: '',
       addForm: {
         name: '',
         time: '',
@@ -228,6 +229,8 @@ export default {
   },
   methods: {
     getDeadlines() {
+      // eslint-disable-next-line
+      console.log(this.user = this.$store.state.userEmail);
       const path = 'api/deadlines';
       axios.get(path)
         .then((res) => {
@@ -322,7 +325,7 @@ export default {
       }
     },
     onSubmitUpdate(evt) {
-      console.log(this.editForm.time);
+      // console.log(this.editForm.time);
       evt.preventDefault();
       this.$refs.editModal.hide();
       let reminder = false;

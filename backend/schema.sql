@@ -1,11 +1,17 @@
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS deadline;
 
+DROP TABLE IF EXISTS verification;
+
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username VARCHAR(30) UNIQUE NOT NULL,
-  password VARCHAR(30) NOT NULL,
-  verified BIT,
+  password VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE verification (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username VARCHAR(30) NOT NULL,
   ver_code INTEGER
 );
 
@@ -18,3 +24,11 @@ CREATE TABLE deadline (
   user_id INTEGER,
   FOREIGN KEY (user_id) REFERENCES user (id)
 );
+
+INSERT INTO user (username,password) VALUES ('admin', 'admin');
+
+select id, username, password from user where username = 'admin';
+
+COMMIT;
+
+select id, username, password from user;

@@ -1,6 +1,11 @@
+from urllib import response
+from click import password_option
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import sqlite3
+import random
+from matplotlib import use
+from sympy import re
 
 # configuration
 DEBUG = True
@@ -104,6 +109,121 @@ def sync():
     post_data = request.get_json()
     syncDeadlines(post_data.get('username'),post_data.get('password')) 
     response_object['message'] = 'Deadline synced'
+    return jsonify(response_object)
+
+
+'''Login'''
+
+
+def authinfo(username):
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("select id, username, password from user where username = '%s';" % username )
+    result = [dict(i) for i in c.fetchall()]
+    conn.close()
+
+    return result
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    response_object = {'status': 'success'}
+    post_data = request.get_json()
+    auth = authinfo(post_data.get('username'))
+
+    if (len(auth)==0):
+        response_object['message'] = 'No such User'
+    
+    elif (auth[0]['password'] != post_data.get('password')):
+        response_object['message'] = 'Wrong Password'
+
+    else: 
+        response_object['message'] = 'Logged in'
+        response_object['userid'] = auth[0]['id']
+
+    print(response_object['message'])
+
+    return jsonify(response_object)
+
+
+
+'''Verification Code'''
+
+def sentCode(username):
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("select id, username, password from user where username = '%s';" % username )
+    result = [dict(i) for i in c.fetchall()]
+
+    if (len(result)!=0): return False
+
+    randomCode = random.randint( 100000, 999999 )
+
+    print(randomCode)
+
+    c.execute("REPLACE INTO verification (username, ver_code) VALUES ('%s', %d)" % (username, randomCode))
+    conn.commit()
+    conn.close()
+
+    return True
+
+
+@app.route('/sentCode', methods=['POST'])
+def handlesentVerifyCode():
+    response_object = {'status': 'success'}
+    post_data = request.get_json()
+    username = post_data.get('username')
+
+    if sentCode(username): response_object['message'] = 'Verification Code Sent'
+    else: response_object['message'] = 'Account Already Registered'
+
+    print(response_object['message'])
+
+    return jsonify(response_object)
+
+
+
+
+'''Register'''
+
+def register(username,password,ver_code):
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    id = 0
+    
+    c.execute("select id, username, password from user where username = '%s';" % username )
+    result = [dict(i) for i in c.fetchall()]
+    if (len(result)!=0): return "Account Already Registered",id
+
+    c.execute("select id, username, ver_code from verification where username = '%s';" % username)
+    verifycode = int([dict(i) for i in c.fetchall()][0]['ver_code'])
+
+
+    if (int(ver_code) != verifycode): return "Wrong Verification Code",id
+
+    else:
+        c.execute("INSERT INTO user (username,password) VALUES ('%s', '%s');" % (username, password))
+        conn.commit()
+        c.execute("select id from user where username = '%s';" % username )
+        id = [dict(i) for i in c.fetchall()][0]['id']
+        return "Registration Success", id
+
+
+@app.route('/register', methods=['POST'])
+def handleRegister():
+    
+    response_object = {'status': 'success'}
+    post_data = request.get_json()
+
+    response_object['message'], response_object['id'] = register(post_data.get('username'), post_data.get('password'), post_data.get('verifyCode'))
+    
+
+    print(response_object['message'])
+
     return jsonify(response_object)
 
 

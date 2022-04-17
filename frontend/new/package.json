@@ -22,6 +22,7 @@
     "dayjs": "^1.11.1",
     "gantt-elastic": "file:../../../gantt-elastic-1.0.12.tgz",
     "gantt-elastic-header": "^0.1.11",
+    "mdbvue": "^6.7.3",
     "moment": "^2.29.1",
     "pc-bootstrap4-datetimepicker": "^4.17.51",
     "vue": "^2.6.11",

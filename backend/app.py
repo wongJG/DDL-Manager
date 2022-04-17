@@ -135,7 +135,7 @@ def login():
     response_object = {'status': 'success'}
     post_data = request.get_json()
     auth = authinfo(post_data.get('username'))
-    print(auth[0]['password'])
+
     if (len(auth)==0):
         response_object['message'] = 'No such User'
 

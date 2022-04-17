@@ -1,9 +1,33 @@
 <!-- eslint-disable max-len -->
 \<template>
+
   <div class="container">
-    <div class="row">
+        <div class="row">
       <div class="col-sm-10">
-        <h1> Deadlines </h1>
+  <b-navbar toggleable="lg" type="Dark" variant="Primary">
+    <!-- <b style="word-space:4em">&nbsp;&nbsp;</b> -->
+    <!-- <b-navbar-brand href="#">DDL Manager</b-navbar-brand> -->
+    <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
+    <!-- <b-collapse id="nav-collapse" is-nav> -->
+      <b-navbar-nav>
+        <b-nav-item href="/project">Project</b-nav-item>
+        <b-nav-item href="/">Deadline</b-nav-item>
+      <!-- </b-navbar-nav> -->
+
+      <!-- Right aligned nav items -->
+      <!-- <b-navbar-nav class="ml-auto"> -->
+        <b-nav-item-dropdown>
+          <!-- Using 'button-content' slot -->
+          <template #button-content>
+            <em>User</em>
+          </template>
+          <b-dropdown-item href="/settings">Profile</b-dropdown-item>
+          <b-dropdown-item href="/signout">Sign Out</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    <!-- </b-collapse> -->
+  </b-navbar>
+        <!-- <h1> Deadlines </h1> -->
         <hr><br>
         <alert :message=message v-if="showMessage"></alert>
         <b-button variant="outline-primary" v-b-modal.add-modal>Add</b-button>

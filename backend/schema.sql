@@ -7,7 +7,14 @@ CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username VARCHAR(30) UNIQUE NOT NULL,
   password VARCHAR(30) NOT NULL,
-  photoLink VARCHAR(100)
+  photoLink VARCHAR(100),
+);
+
+
+CREATE table admin (
+  id INTEGER PRIMARY KEY,
+  isAdmin BIT,
+  FOREIGN key (id) REFERENCES user(id)
 );
 
 CREATE TABLE verification (

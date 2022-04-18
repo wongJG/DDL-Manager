@@ -29,9 +29,9 @@
                         placeholder="Enter Verification Code">
       </b-form-input>
       <br><br>
-      <b-button type='info' @click="register">Sign Up</b-button>
+      <b-button variant="outline-primary" @click="register">Sign Up</b-button>
       <b style="word-space:2em">&nbsp;&nbsp;</b>
-      <b-button type='info' @click="sentCode">Get Verification Code</b-button>
+      <b-button variant="outline-primary" @click="sentCode">Get Verification Code</b-button>
     </div>
     </b-card>
   </div>

@@ -23,6 +23,7 @@
           </template>
           <b-dropdown-item href="/settings">Profile</b-dropdown-item>
           <b-dropdown-item href="/signout">Sign Out</b-dropdown-item>
+          <b-dropdown-item href="/admin">Admin</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     <!-- </b-collapse> -->

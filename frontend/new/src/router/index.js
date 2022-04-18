@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Deadline from '../components/Deadline.vue';
-// import Calendar from '../components/Calendar.vue';
 import Project from '../components/Project.vue';
 import Register from '../components/Register.vue';
 import Settings from '../components/Settings.vue';
@@ -73,6 +72,13 @@ const routes = [
     name: 'notFound',
     hidden: true,
   },
+  {
+    path: '/signout',
+    name: 'logout',
+    meta: {
+      logout: true,
+    },
+  },
 ];
 
 const router = new VueRouter({
@@ -84,7 +90,6 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!sessionStorage.getItem('isLogin')) {
-      console.log('jump');
       next({
         path: '/',
         query: { redirect: to.fullPath },
@@ -92,6 +97,12 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
+  } else if (to.matched.some((record) => record.meta.logout)) {
+    sessionStorage.clear();
+    next({
+      path: '/',
+      query: { redirect: to.fullPath },
+    });
   } else {
     next();
   }

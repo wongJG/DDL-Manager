@@ -22,9 +22,9 @@
                         placeholder="Enter Password">
       </b-form-input>
       <br><br>
-      <b-button type='outline-primary' @click="logIn">Log in</b-button>
+      <b-button variant="outline-primary" @click="logIn">Log in</b-button>
       <b style="word-space:2em">&nbsp;&nbsp;</b>
-      <b-button type='outline-primary' @click="register">Register</b-button>
+      <b-button variant="outline-primary" @click="register">Register</b-button>
     </div>
     </b-card>
   </div>

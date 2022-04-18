@@ -1,11 +1,34 @@
 <!-- eslint-disable max-len -->
 \<template>
     <div>
+    <b-navbar toggleable="lg" type="Dark" variant="Primary">
+    <!-- <b style="word-space:4em">&nbsp;&nbsp;</b> -->
+    <!-- <b-navbar-brand href="#">DDL Manager</b-navbar-brand> -->
+    <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
+    <!-- <b-collapse id="nav-collapse" is-nav> -->
+      <b-navbar-nav>
+        <b-nav-item href="/project">Project</b-nav-item>
+        <b-nav-item href="/deadline">Deadline</b-nav-item>
+      <!-- </b-navbar-nav> -->
+
+      <!-- Right aligned nav items -->
+      <!-- <b-navbar-nav class="ml-auto"> -->
+        <b-nav-item-dropdown>
+          <!-- Using 'button-content' slot -->
+          <template #button-content>
+            <em>User</em>
+          </template>
+          <b-dropdown-item href="/settings">Profile</b-dropdown-item>
+          <b-dropdown-item href="/signout">Sign Out</b-dropdown-item>
+          <b-dropdown-item href="/admin">Admin</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    <!-- </b-collapse> -->
+  </b-navbar>
       <div class="col-sm-10">
-        <h1> Admin </h1>
+        <!-- <h1> Admin </h1> -->
         <hr><br>
         <alert :message=message v-if="showMessage"></alert>
-        <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
@@ -20,13 +43,12 @@
               <td>{{ user.username }}</td>
               <td>
                 <div class="btn-group" role="group">
-                  <button
-                          type="button"
-                          class="btn btn-warning btn-sm"
+                  <b-button
+                          variant="outline-primary"
                           v-b-modal.update-modal
                           @click="editUser(user.id)">
                       Update
-                  </button>
+                  </b-button>
                 </div>
               </td>
             </tr>
@@ -39,16 +61,16 @@
             hide-footer
             hide-header>
       <b-form @submit="onSubmitUpdate" @reset="onDelete" class="w-100">
-      <b-form-group id="form-name-edit-group"
+      <!-- <b-form-group id="form-name-edit-group"
                     label="New Password:"
-                    label-for="form-name-edit-input">
+                    label-for="form-name-edit-input"> -->
           <b-form-input id="form-name-edit-input"
-                        type="text"
+                        type="password"
                         v-model="editForm.newPassword"
                         required
                         placeholder="Enter New Password">
           </b-form-input>
-        </b-form-group>
+        <!-- </b-form-group> -->
         <br>
         <b-button-group>
           <b-button type="submit" variant="outline-primary">Update</b-button>
@@ -154,7 +176,17 @@ export default {
     },
   },
   created() {
-    this.getUsers();
+    const path = '/api/admin';
+    const payload = { id: this.$session.get('userid') };
+    axios.post(path, payload)
+      .then((res) => {
+        if (res.data.isAdmin === 1) this.getUsers();
+        else this.$router.back();
+      })
+      .catch((error) => {
+        // eslint-disable-next-line
+        console.error(error);
+      });
   },
 };
 </script>

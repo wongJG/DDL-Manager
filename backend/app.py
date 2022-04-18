@@ -1,8 +1,10 @@
 from curses import newpad
+from unittest import result
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import sqlite3
 import random
+from numpy import insert
 
 from psutil import users
 
@@ -231,7 +233,6 @@ def handleRegister():
 
 
 '''Change Password'''
-
 @app.route('/changePass', methods=['POST'])
 def changPass():
     
@@ -310,6 +311,29 @@ def singleUser(user_id):
         conn.close()
         response_object['message'] = 'User removed'
     
+    return jsonify(response_object)
+
+
+'''Admin Auth'''
+@app.route('/admin', methods=['POST'])
+def adminAuth():
+    response_object = {'status': 'success'}
+    post_data = request.get_json()
+    id = post_data.get('id')
+
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    # c.execute('CREATE table admin ( id INTEGER PRIMARY KEY, isAdmin BIT, FOREIGN key (id) REFERENCES user(id) );')
+    # c.execute('insert into admin VALUES (5,1);')
+    # conn.commit()
+    c.execute('select id, isAdmin from admin where id = %d;' % id)
+    result = [dict(i) for i in c.fetchall()]
+    conn.close()
+
+    if (len(result) == 0): response_object['isAdmin'] = 0
+    else: response_object['isAdmin'] = 1
+
     return jsonify(response_object)
 
 

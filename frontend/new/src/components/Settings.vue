@@ -19,10 +19,12 @@
           </template>
           <b-dropdown-item href="/settings">Profile</b-dropdown-item>
           <b-dropdown-item href="/signout">Sign Out</b-dropdown-item>
+          <b-dropdown-item href="/admin">Admin</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     <!-- </b-collapse> -->
   </b-navbar>
+  <hr><br>
     <!-- <h1>Settings</h1> -->
     <br>
      <b-card
@@ -45,7 +47,7 @@
                         placeholder="Enter New Password">
       </b-form-input>
       <br><br>
-      <b-button type='info' @click="update">Update</b-button>
+      <b-button variant="outline-primary" @click="update">Update</b-button>
     </div>
     </b-card>
   </div>

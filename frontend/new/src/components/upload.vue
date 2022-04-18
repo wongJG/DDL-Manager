@@ -1,6 +1,6 @@
 <template>
   <div id="app" align='center'>
-     <b-img width="120px" v-if="imageUrl" rounded="circle"
+     <b-img-lazy width="120px" v-if="imageUrl" rounded="circle"
       :src="imageUrl"
       alt="" />
       <br><br>
@@ -34,6 +34,7 @@ export default {
       const res = await axios.post('api/upload', form);
       console.log(res);
       this.imageUrl = res.data;
+      this.$router.go(0);
     },
   },
   created() {

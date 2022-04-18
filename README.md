@@ -12,8 +12,8 @@ This project, DDL Manager, aspires at providing a handy managing platform for st
 - [x] Set up basic front-end and back-end structure :tada:
 - [x] Implement deadline module (with Blackboard Integration)
 - [x] Add FullCalendar integration
-- [ ] Implement user management
-- [ ] Implement team project module
+- [x] Implement user management
+- [x] Implement team project module
 - [ ] UI design
 - [ ] Testing
 

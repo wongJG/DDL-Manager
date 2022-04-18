@@ -1,4 +1,5 @@
 <template>
+<div class="background">
   <div class="TheLogin">
   <b-card
       style="max-width: 540px;"
@@ -28,6 +29,8 @@
     </div>
     </b-card>
   </div>
+  <!-- <img :src="imgSrc" width="100%" height="100%" alt="" /> -->
+  </div>
 </template>
 
 <script>
@@ -43,6 +46,7 @@ export default {
       userPassword: '',
       showMessage: false,
       message: '',
+      // imgSrc: require('../../assets/images/login.jpg')
     };
   },
   components: {
@@ -76,3 +80,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.background {
+    width:100%;
+    height:100%;  /**宽高100%是为了图片铺满屏幕 **/
+    z-index:-1;
+    position: absolute;
+}
+ .content {
+    z-index:1;
+    position: absolute;
+}
+</style>

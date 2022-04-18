@@ -4,6 +4,7 @@ import sqlite3
 import random
 import os
 from urllib.parse import urljoin
+import time
 
 
 # configuration
@@ -170,6 +171,9 @@ def sentCode(username):
     c.execute("REPLACE INTO verification (username, ver_code) VALUES ('%s', %d)" % (username, randomCode))
     conn.commit()
     conn.close()
+    
+    from sentEmail import sentCode as sent
+    sent(username,randomCode)
 
     return True
 
@@ -183,7 +187,7 @@ def handlesentVerifyCode():
     if sentCode(username): response_object['message'] = 'Verification Code Sent'
     else: response_object['message'] = 'Account Already Registered'
 
-    print(response_object['message'])
+    # print(response_object['message'])
 
     return jsonify(response_object)
 
@@ -205,14 +209,16 @@ def register(username,password,ver_code):
     c.execute("select id, username, ver_code from verification where username = '%s';" % username)
     verifycode = int([dict(i) for i in c.fetchall()][0]['ver_code'])
 
+    print(int(ver_code), int(verifycode))
 
-    if (int(ver_code) != verifycode): return "Wrong Verification Code",id
+    if (int(ver_code) != int(verifycode)): return "Wrong Verification Code",id
 
     else:
         c.execute("INSERT INTO user (username,password) VALUES ('%s', '%s');" % (username, password))
         conn.commit()
         c.execute("select id from user where username = '%s';" % username )
         id = [dict(i) for i in c.fetchall()][0]['id']
+        conn.close()
         return "Registration Success", id
 
 
@@ -343,11 +349,13 @@ def upload():
 
     # print(request.form.get('id'))
     filename = request.form.get('id')
-    filepath = os.path.join('./', filename)
+    filepath = os.path.join('./image', filename)
     file.save(filepath)
 
-    file_url = urljoin(request.host_url, 'uploads/'+filepath)
+    file_url = urljoin(request.host_url, 'uploads/'+ filename)
     # print(file_url)
+
+    time.sleep(0.1)
     
     return file_url
 
@@ -356,7 +364,8 @@ def upload():
 
 @app.route('/uploads/<path:filename>')
 def get_file(filename):
-    return send_from_directory('./', filename)
+    time.sleep(0.2)
+    return send_from_directory('./image', filename)
 
 if __name__ == '__main__':
     app.run()

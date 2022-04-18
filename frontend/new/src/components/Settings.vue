@@ -32,6 +32,7 @@
     >
     <alert :message=message v-if="showMessage"></alert>
     <!-- <UploadImg v-model="photolink" /> -->
+    <upload></upload>
     <div>
       <b-form-input id="form-name-input"
                         type="password"
@@ -50,13 +51,14 @@
       <b-button variant="outline-primary" @click="update">Update</b-button>
     </div>
     </b-card>
+    <br><br><br>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import Alert from './Alert.vue';
-// import upload from './Upload.vue';
+import upload from './upload.vue';
 
 export default {
   name: 'TheLogin',
@@ -71,7 +73,7 @@ export default {
   },
   components: {
     alert: Alert,
-    // uploading
+    upload,
   },
   methods: {
     update() {

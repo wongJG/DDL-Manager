@@ -1,12 +1,10 @@
-from curses import newpad
-from unittest import result
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import random
-from numpy import insert
+import os
+from urllib.parse import urljoin
 
-from psutil import users
 
 # configuration
 DEBUG = True
@@ -336,6 +334,29 @@ def adminAuth():
 
     return jsonify(response_object)
 
+
+'''pic upload'''
+
+@app.route("/upload", methods=['POST'])
+def upload():
+    file = request.files.get('file')
+
+    # print(request.form.get('id'))
+    filename = request.form.get('id')
+    filepath = os.path.join('./', filename)
+    file.save(filepath)
+
+    file_url = urljoin(request.host_url, 'uploads/'+filepath)
+    # print(file_url)
+    
+    return file_url
+
+
+'''Get photo'''
+
+@app.route('/uploads/<path:filename>')
+def get_file(filename):
+    return send_from_directory('./', filename)
 
 if __name__ == '__main__':
     app.run()

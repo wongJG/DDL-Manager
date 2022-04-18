@@ -1,6 +1,6 @@
 import BootstrapVue from 'bootstrap-vue';
 import datePicker from 'vue-bootstrap-datetimepicker';
-import VueBus from 'vue-bus';
+import VueSessionStorage from 'vue-sessionstorage';
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
@@ -9,7 +9,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import store from './store';
 
-Vue.use(VueBus);
+Vue.use(VueSessionStorage);
+// Vue.use(VueBus);
 Vue.use(datePicker);
 Vue.use(BootstrapVue);
 

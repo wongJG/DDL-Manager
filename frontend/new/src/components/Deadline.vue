@@ -11,7 +11,7 @@
     <!-- <b-collapse id="nav-collapse" is-nav> -->
       <b-navbar-nav>
         <b-nav-item href="/project">Project</b-nav-item>
-        <b-nav-item href="/">Deadline</b-nav-item>
+        <b-nav-item href="/deadline">Deadline</b-nav-item>
       <!-- </b-navbar-nav> -->
 
       <!-- Right aligned nav items -->
@@ -77,23 +77,22 @@
     <b-modal ref="addModal"
             id="add-modal"
             title="Add a new deadline"
-            hide-footer
-            hide-header>
+            hide-footer>
       <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <b-form-group id="form-name-group"
-                    label="Name:"
-                    label-for="form-name-input">
+      <!-- <b-form-group id="form-name-group" -->
+                    <!-- label="Name:" -->
+                    <!-- label-for="form-name-input"> -->
           <b-form-input id="form-name-input"
                         type="text"
                         v-model="addForm.name"
                         required
                         placeholder="Enter Name">
           </b-form-input>
-          </b-form-group>
+          <!-- </b-form-group> -->
           <br>
-          <b-form-group id="form-time-group"
+          <!-- <b-form-group id="form-time-group"
                       label="Time:"
-                      label-for="form-time-input">
+                      label-for="form-time-input"> -->
             <!-- <b-form-input id="form-time-input"
                           type="text"
                           v-model="addForm.time"
@@ -101,7 +100,7 @@
                           placeholder="Enter Time">
             </b-form-input> -->
             <date-picker v-model='addForm.time' :config='dateOptions'></date-picker>
-          </b-form-group>
+          <!-- </b-form-group> -->
           <br>
         <b-form-group id="form-reminder-group">
           <b-form-checkbox-group v-model="addForm.reminder" id="form-checks">
@@ -119,8 +118,7 @@
     <b-modal ref="syncModal"
             id="sync-modal"
             title="Sync with Blackboard"
-            hide-footer
-            hide-header>
+            hide-footer>
       <b-form @submit="onSyncSubmit" @reset="onSyncReset" class="w-100">
       <b-form-group id="form-username-group"
                     label="Username:"
@@ -160,22 +158,14 @@
             hide-footer
             hide-header>
       <b-form @submit="onSubmitUpdate" @reset="onDeleteDeadline" class="w-100">
-      <b-form-group id="form-name-edit-group"
-                    label="Name:"
-                    label-for="form-name-edit-input">
           <b-form-input id="form-name-edit-input"
                         type="text"
                         v-model="editForm.name"
                         required
                         placeholder="Enter Name">
           </b-form-input>
-        </b-form-group>
           <br>
-          <b-form-group id="form-name-edit-group"
-                    label="Time:"
-                    label-for="form-time-edit-input">
           <date-picker v-model='editForm.time' :config='dateOptions'></date-picker>
-        </b-form-group>
           <!-- <CustomDateTimePicker /> -->
           <br>
         <b-form-group id="form-reminder-edit-group">
@@ -255,8 +245,8 @@ export default {
     getDeadlines() {
       // eslint-disable-next-line
       const path = 'api/deadlines';
-      console.log(this.$store.state.userid);
-      const payload = { id: this.$store.state.userid };
+      // console.log(this.$store.state.userid);
+      const payload = { id: this.$session.get('userid') };
       axios.post(path, payload)
         .then((res) => {
           this.deadlines = res.data.deadlines;
@@ -298,7 +288,7 @@ export default {
       let reminder = false;
       if (this.addForm.reminder[0]) reminder = 1;
       const payload = {
-        id: this.$store.state.userid,
+        id: this.$session.get('userid'),
         name: this.addForm.name,
         time: this.addForm.time,
         reminder,
@@ -315,7 +305,7 @@ export default {
       evt.preventDefault();
       this.show_waiting_sign = true;
       const payload = {
-        id: this.$store.state.userid,
+        id: this.$session.get('userid'),
         username: this.syncForm.username,
         password: this.syncForm.password,
       };
@@ -358,7 +348,7 @@ export default {
       let reminder = false;
       if (this.editForm.reminder[0]) reminder = 1;
       const payload = {
-        id: this.$store.state.userid,
+        id: this.$session.get('userid'),
         name: this.editForm.name,
         time: this.editForm.time,
         reminder,

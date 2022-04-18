@@ -34,10 +34,10 @@ def get_all_deadline(id):
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute('select id, name, time, set_reminder, user_id as reminder from deadline where time > DATE() and user_id = %d order by time;' % id)
+    c.execute('select id, name, time, set_reminder, user_id as reminder from deadline where user_id = %d order by time;' % id)
     result = [dict(i) for i in c.fetchall()]
 
-    c.execute('select id, name as title, time as date, user_id from deadline where time > DATE() and user_id = %d order by time;' % id)
+    c.execute('select id, name as title, time as date, user_id from deadline where user_id = %d order by time;' % id)
     result2 = [dict(i) for i in c.fetchall()]
 
     conn.close()

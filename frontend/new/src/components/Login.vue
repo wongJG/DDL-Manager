@@ -1,6 +1,10 @@
 <template>
   <div class="TheLogin">
-    <h1>Login</h1>
+  <b-card
+      style="max-width: 540px;"
+      title="Login"
+    >
+    <!-- <h1>Login</h1> -->
     <br>
     <alert :message=message v-if="showMessage"></alert>
     <div>
@@ -18,14 +22,16 @@
                         placeholder="Enter Password">
       </b-form-input>
       <br><br>
-      <b-button type='info' @click="logIn">Log in</b-button>
+      <b-button type='outline-primary' @click="logIn">Log in</b-button>
       <b style="word-space:2em">&nbsp;&nbsp;</b>
-      <b-button type='info' @click="register">Register</b-button>
+      <b-button type='outline-primary' @click="register">Register</b-button>
     </div>
+    </b-card>
   </div>
 </template>
 
 <script>
+import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
 import Alert from './Alert.vue';
 
@@ -53,17 +59,18 @@ export default {
         .then((res) => {
           this.showMessage = true;
           this.message = res.data.message;
-          this.$store.state.userid = res.data.userid;
-          if (res.data.message === 'Logged in') this.$emit('TheLogin::loginResult', { loginResult: true });
+          if (res.data.message === 'Logged in') {
+            this.$session.set('userid', res.data.userid);
+            sessionStorage.setItem('isLogin', 'true');
+            this.$router.push('/Deadline');
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.log(error);
         });
-      // this.$emit('TheLogin::loginResult', { loginResult: true, email: this.userEmail });
     },
     register() {
-      this.$emit('TheLogin::loginResult', { loginResult: true, email: this.userEmail });
       this.$router.push('/Register');
     },
   },

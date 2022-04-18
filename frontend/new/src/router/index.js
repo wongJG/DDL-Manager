@@ -6,14 +6,24 @@ import Project from '../components/Project.vue';
 import Register from '../components/Register.vue';
 import Settings from '../components/Settings.vue';
 import Admin from '../components/Admin.vue';
+import Login from '../components/Login.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
+    path: '/deadline',
     name: 'Deadline',
     component: Deadline,
+    meta: {
+      title: 'Deadline',
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/',
+    name: 'Login',
+    component: Login,
   },
   {
     path: '/register',
@@ -24,16 +34,28 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings,
+    meta: {
+      title: 'Settings',
+      requiresAuth: true,
+    },
   },
   {
     path: '/admin',
     name: 'Admin',
     component: Admin,
+    meta: {
+      title: 'Admin',
+      requiresAuth: true,
+    },
   },
   {
     path: '/project',
     name: 'project',
     component: Project,
+    meta: {
+      title: 'Project',
+      requiresAuth: true,
+    },
   },
   {
     path: '/about',
@@ -57,6 +79,22 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!sessionStorage.getItem('isLogin')) {
+      console.log('jump');
+      next({
+        path: '/',
+        query: { redirect: to.fullPath },
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

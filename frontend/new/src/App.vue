@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <router-view v-if="this.$store.state.islogin"></router-view>
-    <TheLogin v-else @TheLogin::loginResult="handleLoginResult"/>
+    <router-view></router-view>
+    <!-- <TheLogin v-else @TheLogin::loginResult="handleLoginResult"/> -->
   </div>
 </template>
 
 <script>
-import TheLogin from './components/Login.vue';
+// import TheLogin from './components/Login.vue';
 
 export default {
   name: 'app',
   components: {
-    TheLogin,
+    // TheLogin,
   },
   data() {
     return {

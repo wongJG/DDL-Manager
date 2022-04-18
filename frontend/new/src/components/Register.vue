@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1>Register</h1>
+    <b-card
+      style="max-width: 540px;"
+      title="Register"
+    >
+    <!-- <h1>Register</h1> -->
     <br>
     <alert :message=message v-if="showMessage"></alert>
     <div>
@@ -29,6 +33,7 @@
       <b style="word-space:2em">&nbsp;&nbsp;</b>
       <b-button type='info' @click="sentCode">Get Verification Code</b-button>
     </div>
+    </b-card>
   </div>
 </template>
 

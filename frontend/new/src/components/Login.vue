@@ -1,6 +1,6 @@
 <template>
 <div class="background">
-  <div class="TheLogin">
+  <div class="TheLogin" align="center">
   <b-card
       style="max-width: 540px;"
       title="Login"
@@ -80,16 +80,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.background {
-    width:100%;
-    height:100%;  /**宽高100%是为了图片铺满屏幕 **/
-    z-index:-1;
-    position: absolute;
-}
- .content {
-    z-index:1;
-    position: absolute;
-}
-</style>

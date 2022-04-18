@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div align='center'>
       <b-navbar toggleable="lg" type="Dark" variant="Primary">
     <!-- <b style="word-space:4em">&nbsp;&nbsp;</b> -->
     <!-- <b-navbar-brand href="#">DDL Manager</b-navbar-brand> -->

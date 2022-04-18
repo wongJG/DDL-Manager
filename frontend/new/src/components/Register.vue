@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div align='center'>
     <b-card
       style="max-width: 540px;"
       title="Register"

@@ -23,11 +23,17 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login,
+    meta: {
+      title: 'Login',
+    },
   },
   {
     path: '/register',
     name: 'Register',
     component: Register,
+    meta: {
+      title: 'Register',
+    },
   },
   {
     path: '/settings',
@@ -60,6 +66,9 @@ const routes = [
     path: '/about',
     name: 'About',
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    meta: {
+      title: 'About',
+    },
   },
   {
     path: '/404',
@@ -88,6 +97,9 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!sessionStorage.getItem('isLogin')) {
       next({

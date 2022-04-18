@@ -69,7 +69,7 @@ const tasks = [
     id: 1,
     label: 'Make some noise',
     user:
-      '<a href="https://www.google.com/search?q=John+Doe" target="_blank" style="color:#0077c0;">John Doe</a>',
+      '<a href="https://www.google.com/search?q=John+Doe" target="_blank" style="color:#0077c0;">Liu Che</a>',
     start: getDate(-24 * 5),
     duration: 15 * 24 * 60 * 60 * 1000,
     percent: 85,
@@ -79,7 +79,7 @@ const tasks = [
     id: 2,
     label: 'With great power comes great responsibility',
     user:
-      '<a href="https://www.google.com/search?q=Peter+Parker" target="_blank" style="color:#0077c0;">Peter Parker</a>',
+      '<a href="https://www.google.com/search?q=Peter+Parker" target="_blank" style="color:#0077c0;">Wang Wojian</a>',
     parentId: 1,
     start: getDate(-24 * 4),
     duration: 4 * 24 * 60 * 60 * 1000,

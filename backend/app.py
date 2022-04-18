@@ -250,7 +250,7 @@ def changPass():
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("select id, password from user where id = %d;" % id )
+    c.execute("select id, password from user where id = %d;" % int(id) )
     fetch_oldPass = [dict(i) for i in c.fetchall()][0]['password']
 
     if (fetch_oldPass != oldPass):

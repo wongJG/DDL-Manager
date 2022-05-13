@@ -24,11 +24,13 @@
     "gantt-elastic": "file:../../../gantt-elastic-1.0.12.tgz",
     "gantt-elastic-header": "^0.1.11",
     "mdbvue": "^6.7.3",
+    "mobile-device-detect": "^0.4.3",
     "moment": "^2.29.1",
     "pc-bootstrap4-datetimepicker": "^4.17.51",
     "vue": "^2.6.11",
     "vue-bootstrap-datetimepicker": "^5.0.1",
     "vue-bus": "^1.2.1",
+    "vue-mobile-detection": "^2.0.1",
     "vue-router": "^3.2.0",
     "vue-sessionstorage": "^1.0.0",
     "vuex": "^3.6.2"

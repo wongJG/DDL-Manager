@@ -14,6 +14,6 @@ This project, DDL Manager, aspires at providing a handy managing platform for st
 - [x] Add FullCalendar integration
 - [x] Implement user management
 - [x] Implement team project module
-- [ ] UI design
-- [ ] Testing
+- [x] UI design
+- [x] Testing
 

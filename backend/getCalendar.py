@@ -12,6 +12,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
+'''Fetch deadlines from Blackboard'''
 def blackboardGetCalendar(user_id,passwd,bb_link):
 
     options = Options()
@@ -47,6 +48,7 @@ def blackboardGetCalendar(user_id,passwd,bb_link):
     time.sleep(3)
 
 
+'''Converter: from ics file to database content'''
 class Conv():
     
     def __init__(self):
@@ -72,7 +74,8 @@ class Conv():
             data_row = [str(x) for x in data_row]
             self.data.append(data_row)  
 
-                        
+
+    '''SQL writer'''            
     def write_sql(self,id):
         
         connection = sqlite3.connect("test.db")
@@ -87,8 +90,10 @@ class Conv():
         connection.close()
 
 
+
+'''from Blackboard to database'''
 def syncDeadlines(id, stu_id,passwd):
-    
+
     blackboardGetCalendar(stu_id,passwd,'https://bb.cuhk.edu.cn')
     conv = Conv()
     conv.read_calendar('learn.ics')

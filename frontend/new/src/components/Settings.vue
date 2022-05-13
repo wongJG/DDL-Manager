@@ -1,19 +1,16 @@
 <template>
   <div align='center'>
       <b-navbar toggleable="lg" type="Dark" variant="Primary">
-    <!-- <b style="word-space:4em">&nbsp;&nbsp;</b> -->
-    <!-- <b-navbar-brand href="#">DDL Manager</b-navbar-brand> -->
-    <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
-    <!-- <b-collapse id="nav-collapse" is-nav> -->
+      
+
       <b-navbar-nav>
+
+        <!-- navbar item -->
         <b-nav-item href="/project">Project</b-nav-item>
         <b-nav-item href="/deadline">Deadline</b-nav-item>
-      <!-- </b-navbar-nav> -->
 
-      <!-- Right aligned nav items -->
-      <!-- <b-navbar-nav class="ml-auto"> -->
+        <!-- Dropdown item -->
         <b-nav-item-dropdown>
-          <!-- Using 'button-content' slot -->
           <template #button-content>
             <em>User</em>
           </template>
@@ -22,16 +19,16 @@
           <b-dropdown-item href="/admin">Admin</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-    <!-- </b-collapse> -->
   </b-navbar>
-  <hr><br>
-    <!-- <h1>Settings</h1> -->
-    <br>
-     <b-card
-      style="max-width: 540px;"
-    >
+  
+  <hr><br><br>
+
+  <!-- Card view -->
+     <b-card style="max-width: 540px;">
+    <!-- Message display -->
     <alert :message=message v-if="showMessage"></alert>
-    <!-- <UploadImg v-model="photolink" /> -->
+
+    <!-- Upload avatar module -->
     <upload></upload>
     <div>
       <b-form-input id="form-name-input"
@@ -50,7 +47,11 @@
       <br><br>
       <b-button variant="outline-primary" @click="update">Update</b-button>
     </div>
+
+
     </b-card>
+
+
     <br><br><br>
   </div>
 </template>
@@ -68,7 +69,6 @@ export default {
       newPassword: '',
       showMessage: false,
       message: '',
-    //   photolink: '',
     };
   },
   components: {
@@ -76,6 +76,7 @@ export default {
     upload,
   },
   methods: {
+    // Forward changing password to backend
     update() {
       const path = 'api/changePass';
       const payload = {
@@ -85,11 +86,10 @@ export default {
       };
       axios.post(path, payload)
         .then((res) => {
-          this.showMessage = true;
+          this.showMessage = true;           // Display message if success
           this.message = res.data.message;
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.log(error);
         });
     },

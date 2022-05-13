@@ -76,44 +76,45 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/404.vue'),
   },
   {
-    path: '*',
-    redirect: '/404',
-    name: 'notFound',
-    hidden: true,
-  },
-  {
     path: '/signout',
     name: 'logout',
     meta: {
       logout: true,
     },
   },
+  {
+    path: '*',        // All unmatched pages redirect to 404 page
+    redirect: '/404',
+    name: 'notFound',
+    hidden: true,
+  },
 ];
 
+```Construct the router```
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {     // Verified login state
   if (to.meta.title) {
     document.title = to.meta.title;
   }
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!sessionStorage.getItem('isLogin')) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {  // If the page require auth
+    if (!sessionStorage.getItem('isLogin')) { // If it is not logged in
       next({
         path: '/',
-        query: { redirect: to.fullPath },
+        query: { redirect: to.fullPath },  // Go to login page
       });
     } else {
-      next();
+      next();                              // Go to the requested page
     }
-  } else if (to.matched.some((record) => record.meta.logout)) {
+  } else if (to.matched.some((record) => record.meta.logout)) {  // if logout is hit
     sessionStorage.clear();
     next({
       path: '/',
-      query: { redirect: to.fullPath },
+      query: { redirect: to.fullPath },    // redirect to login page
     });
   } else {
     next();

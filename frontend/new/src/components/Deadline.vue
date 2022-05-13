@@ -5,19 +5,12 @@
         <div class="row">
       <div class="col-sm-10">
   <b-navbar toggleable="lg" type="Dark" variant="Primary">
-    <!-- <b style="word-space:4em">&nbsp;&nbsp;</b> -->
-    <!-- <b-navbar-brand href="#">DDL Manager</b-navbar-brand> -->
-    <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
-    <!-- <b-collapse id="nav-collapse" is-nav> -->
+
+    <!-- Navbar -->
       <b-navbar-nav>
         <b-nav-item href="/project">Project</b-nav-item>
         <b-nav-item href="/deadline">Deadline</b-nav-item>
-      <!-- </b-navbar-nav> -->
-
-      <!-- Right aligned nav items -->
-      <!-- <b-navbar-nav class="ml-auto"> -->
         <b-nav-item-dropdown>
-          <!-- Using 'button-content' slot -->
           <template #button-content>
             <em>User</em>
           </template>
@@ -26,82 +19,43 @@
           <b-dropdown-item href="/admin">Admin</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-    <!-- </b-collapse> -->
   </b-navbar>
-        <!-- <h1> Deadlines </h1> -->
+
         <hr><br>
+
+        <!-- display message (if enabled) -->
         <alert :message=message v-if="showMessage"></alert>
+
+        <!-- Add bottom -->
         <b-button variant="outline-primary" v-b-modal.add-modal>Add</b-button>
         <b style="word-space:2em">&nbsp;&nbsp;</b>
+
+        <!-- Sync bottom -->
         <b-button variant="outline-primary" v-b-modal.sync-modal>Sync</b-button>
-        <!-- <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Time</th>
-              <th scope="col">Reminder?</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(deadline, index) in deadlines" :key="index">
-              <td>{{ deadline.name }}</td>
-              <td>{{ deadline.time }}</td>
-              <td>
-                <span v-if="deadline.reminder">Yes</span>
-                <span v-else>No</span>
-              </td>
-              <td>
-                <div class="btn-group" role="group">
-                  <button
-                          type="button"
-                          class="btn btn-warning btn-sm"
-                          v-b-modal.update-modal
-                          @click="editDeadline(deadline.id)">
-                      Update
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
-      <br>
-      <br>
+  
+      <br><br>
+
+      <!-- Calendar -->
       <calendar ref="calendar" :deadline="deadlines"></calendar>
-      <br>
-      <br>
-      <br>
-      <br>
+      
+      <br><br><br><br>
       </div>
     </div>
+
+    <!-- add deadline form -->
     <b-modal ref="addModal"
             id="add-modal"
             title="Add a new deadline"
             hide-footer>
       <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <!-- <b-form-group id="form-name-group" -->
-                    <!-- label="Name:" -->
-                    <!-- label-for="form-name-input"> -->
           <b-form-input id="form-name-input"
                         type="text"
                         v-model="addForm.name"
                         required
                         placeholder="Enter Name">
           </b-form-input>
-          <!-- </b-form-group> -->
           <br>
-          <!-- <b-form-group id="form-time-group"
-                      label="Time:"
-                      label-for="form-time-input"> -->
-            <!-- <b-form-input id="form-time-input"
-                          type="text"
-                          v-model="addForm.time"
-                          required
-                          placeholder="Enter Time">
-            </b-form-input> -->
             <date-picker v-model='addForm.time' :config='dateOptions'></date-picker>
-          <!-- </b-form-group> -->
           <br>
         <b-form-group id="form-reminder-group">
           <b-form-checkbox-group v-model="addForm.reminder" id="form-checks">
@@ -116,6 +70,8 @@
         </b-button-group>
       </b-form>
       </b-modal>
+
+    <!-- sync deadline form -->
     <b-modal ref="syncModal"
             id="sync-modal"
             title="Sync with Blackboard"
@@ -153,6 +109,8 @@
         </b-button-group>
       </b-form>
     </b-modal>
+
+    <!-- edit deadline form -->
     <b-modal ref="editModal"
             id="update-modal"
             title="Update"
@@ -243,6 +201,7 @@ export default {
     datePicker,
   },
   methods: {
+    // request all deadline from back-end
     getDeadlines() {
       // eslint-disable-next-line
       const path = 'api/deadlines';
@@ -258,11 +217,12 @@ export default {
           console.error(error);
         });
     },
+    // forward add deadline request to back-end
     addDeadline(payload) {
       const path = 'api/add-deadline';
       axios.post(path, payload)
         .then(() => {
-          this.getDeadlines();
+          this.getDeadlines();              // re-fetch all deadlines
           this.message = 'Deadline added!';
           this.showMessage = true;
         })
@@ -272,6 +232,7 @@ export default {
           this.getDeadlines();
         });
     },
+    // Initialize forms
     initForm() {
       this.addForm.name = '';
       this.addForm.time = '';
@@ -283,6 +244,7 @@ export default {
       this.syncForm.username = '';
       this.syncForm.password = '';
     },
+    // Action on deadline adding is submitted
     onSubmit(evt) {
       evt.preventDefault();
       this.$refs.addModal.hide();
@@ -295,13 +257,15 @@ export default {
         reminder,
       };
       this.addDeadline(payload);
-      this.initForm();
+      this.initForm();             // clean the form
     },
+    // Action on adding deadline is cancel
     onReset(evt) {
       evt.preventDefault();
       this.$refs.addModal.hide();
       this.initForm();
     },
+    // Action on deadline sync is submitted
     onSyncSubmit(evt) {
       evt.preventDefault();
       this.show_waiting_sign = true;
@@ -313,6 +277,7 @@ export default {
       this.syncDeadline(payload);
       this.initForm();
     },
+    // forward deadline sync request to back-end
     syncDeadline(payload) {
       const path = 'api/deadlines/sync';
       axios.put(path, payload)
@@ -329,11 +294,13 @@ export default {
           this.getDeadlines();
         });
     },
+    // Action on deadline sync is cancel
     onSyncReset(evt) {
       evt.preventDefault();
       this.$refs.syncModal.hide();
       this.initForm();
     },
+    // find the deadline to be edited and load into edit form
     editDeadline(id) {
       for (let i = 0; i < this.deadlines.length; i += 1) {
         if (this.deadlines[i].id === Number(id)) {
@@ -342,8 +309,8 @@ export default {
         }
       }
     },
+    // Action on deadline update is submitted
     onSubmitUpdate(evt) {
-      // console.log(this.editForm.time);
       evt.preventDefault();
       this.$refs.editModal.hide();
       let reminder = false;
@@ -356,6 +323,7 @@ export default {
       };
       this.updateDeadline(payload, this.editForm.id);
     },
+    // forward deadline update request to back-end
     updateDeadline(payload, ID) {
       const path = `api/deadlines/${ID}`;
       axios.put(path, payload)
@@ -370,12 +338,14 @@ export default {
           this.getDeadlines();
         });
     },
+    // Action on deadline update is cancel
     onResetUpdate(evt) {
       evt.preventDefault();
       this.$refs.editModal.hide();
       this.initForm();
       this.getDeadlines();
     },
+    // forward deadline delete request to back-end
     removeDeadline(ID) {
       const path = `api/deadlines/${ID}`;
       axios.delete(path)
@@ -390,12 +360,14 @@ export default {
           this.getDeadlines();
         });
     },
+    // Action on deadline delete is submitted
     onDeleteDeadline(evt) {
       evt.preventDefault();
       this.$refs.editModal.hide();
       this.removeDeadline(this.editForm.id);
     },
   },
+  // Initialize the page
   created() {
     this.getDeadlines();
   },

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Display message -->
     <b-alert variant="primary" show>{{ message }}</b-alert>
     <br>
   </div>
@@ -7,6 +8,6 @@
 
 <script>
 export default {
-  props: ['message'],
+  props: ['message'], // Use to display message
 };
 </script>

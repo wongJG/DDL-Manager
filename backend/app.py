@@ -18,18 +18,47 @@ app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 
+
+'''For connection testing '''
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify('pong!')
+
+
+
+'''Connect with database'''
 def get_db_connection():
     conn = sqlite3.connect('test.db')
     conn.row_factory = sqlite3.Row
     return conn
 
 
-# For testing
-@app.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify('pong!')
+
+'''Insert new deadline'''
+def add_deadline(user_id, name,time,set_reminder):
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("INSERT INTO deadline (name,time,from_bb,set_reminder,user_id) VALUES ('%s', '%s', 0, %s, %d)" % (name,time,set_reminder,user_id))
+    conn.commit()
+    conn.close()
 
 
+'''Handle deadline adding request'''
+@app.route('/add-deadline', methods=['POST'])
+def handleaddDeadline():
+
+    # Add deadlines
+    response_object = {'status': 'success'}
+    # if request.method == 'POST':
+    post_data = request.get_json()
+    add_deadline(post_data.get('id'),post_data.get('name'),post_data.get('time'),post_data.get('reminder'))
+    response_object['message'] = 'Deadline added'
+    
+    return jsonify(response_object)
+
+
+'''Fetch all deadline'''
 def get_all_deadline(id):
 
     conn = get_db_connection()
@@ -45,36 +74,8 @@ def get_all_deadline(id):
 
     return result, result2
 
-def add_deadline(user_id, name,time,set_reminder):
 
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("INSERT INTO deadline (name,time,from_bb,set_reminder,user_id) VALUES ('%s', '%s', 0, %s, %d)" % (name,time,set_reminder,user_id))
-    conn.commit()
-    conn.close()
-
-def remove_deadline(deadline_id):
-    
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("DELETE FROM deadline WHERE id = %s;" % deadline_id)
-    conn.commit()
-    conn.close()
-
-
-@app.route('/add-deadline', methods=['POST'])
-def handleaddDeadline():
-
-    # Add deadlines
-    response_object = {'status': 'success'}
-    # if request.method == 'POST':
-    post_data = request.get_json()
-    add_deadline(post_data.get('id'),post_data.get('name'),post_data.get('time'),post_data.get('reminder'))
-    response_object['message'] = 'Deadline added'
-    
-    return jsonify(response_object)
-
-
+'''Handle get deadline request'''
 @app.route('/deadlines', methods=['POST'])
 def handlegetDeadline():
 
@@ -87,8 +88,16 @@ def handlegetDeadline():
     return jsonify(response_object)
 
 
+'''delete a deadline'''
+def remove_deadline(deadline_id):
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM deadline WHERE id = %s;" % deadline_id)
+    conn.commit()
+    conn.close()
 
-
+'''handle delete/update deadline request'''
 @app.route('/deadlines/<deadline_id>', methods=['PUT', 'DELETE'])
 def single(deadline_id):
     response_object = {'status': 'success'}
@@ -107,6 +116,7 @@ def single(deadline_id):
     return jsonify(response_object)
 
 
+'''sync deadline with Blackboard'''
 @app.route('/deadlines/sync', methods=['PUT'])
 def sync():
     from getCalendar import syncDeadlines
@@ -117,9 +127,7 @@ def sync():
     return jsonify(response_object)
 
 
-'''Login'''
-
-
+'''Login authenticate'''
 def authinfo(username):
     
     conn = get_db_connection()
@@ -131,6 +139,7 @@ def authinfo(username):
     return result
 
 
+'''handle login request'''
 @app.route('/login', methods=['POST'])
 def login():
     response_object = {'status': 'success'}
@@ -152,8 +161,7 @@ def login():
 
 
 
-'''Verification Code'''
-
+'''sent verification code'''
 def sentCode(username):
 
     conn = get_db_connection()
@@ -168,7 +176,7 @@ def sentCode(username):
 
     print(randomCode)
 
-    c.execute("REPLACE INTO verification (username, ver_code) VALUES ('%s', %d)" % (username, randomCode))
+    c.execute("INSERT OR REPLACE INTO verification (username, ver_code) VALUES ('%s', %d)" % (username, randomCode))
     conn.commit()
     conn.close()
     
@@ -178,6 +186,7 @@ def sentCode(username):
     return True
 
 
+'''handle verification request'''
 @app.route('/sentCode', methods=['POST'])
 def handlesentVerifyCode():
     response_object = {'status': 'success'}
@@ -187,15 +196,14 @@ def handlesentVerifyCode():
     if sentCode(username): response_object['message'] = 'Verification Code Sent'
     else: response_object['message'] = 'Account Already Registered'
 
-    # print(response_object['message'])
+    # print(response_object['message']) # Debug
 
     return jsonify(response_object)
 
 
 
 
-'''Register'''
-
+'''Registerer'''
 def register(username,password,ver_code):
     
     conn = get_db_connection()
@@ -222,6 +230,7 @@ def register(username,password,ver_code):
         return "Registration Success", id
 
 
+'''handle registration request'''
 @app.route('/register', methods=['POST'])
 def handleRegister():
     
@@ -270,7 +279,6 @@ def changPass():
 
 
 '''User Management'''
-
 @app.route('/users', methods=['GET'])
 def getAllUsers():
 
@@ -342,7 +350,6 @@ def adminAuth():
 
 
 '''pic upload'''
-
 @app.route("/upload", methods=['POST'])
 def upload():
     file = request.files.get('file')
@@ -361,7 +368,6 @@ def upload():
 
 
 '''Get photo'''
-
 @app.route('/uploads/<path:filename>')
 def get_file(filename):
     time.sleep(0.2)

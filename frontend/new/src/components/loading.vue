@@ -1,10 +1,11 @@
 <template>
+<!-- Show loading signal -->
 <div class="loading"></div>
 </template>
 
 <script>
 export default {
-  name: 'Loading',
+  name: 'Loading', // use to show loading signal
 };
 </script>
 

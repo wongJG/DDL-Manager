@@ -1,12 +1,14 @@
 <template>
   <div align='center'>
-    <b-card
-      style="max-width: 540px;"
-      title="Register"
-    >
-    <!-- <h1>Register</h1> -->
+
+    <!-- Card view -->
+    <b-card style="max-width: 540px;" title="Register">
     <br>
+
+    <!-- Display message (when enabled) -->
     <alert :message=message v-if="showMessage"></alert>
+    
+    <!-- Input form -->
     <div>
       <b-form-input id="form-name-input"
                         type="text"
@@ -33,6 +35,8 @@
       <b style="word-space:2em">&nbsp;&nbsp;</b>
       <b-button variant="outline-primary" @click="sentCode">Get Verification Code</b-button>
     </div>
+
+
     </b-card>
   </div>
 </template>
@@ -56,6 +60,7 @@ export default {
     alert: Alert,
   },
   methods: {
+    // forward register request to back-end
     register() {
       const path = 'api/register';
       const payload = {
@@ -73,10 +78,10 @@ export default {
           }
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.log(error);
         });
     },
+    // forward sent verification code request to back-end
     sentCode() {
       const path = 'api/sentCode';
       const payload = {
@@ -88,7 +93,6 @@ export default {
           this.message = res.data.message;
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.log(error);
         });
     },

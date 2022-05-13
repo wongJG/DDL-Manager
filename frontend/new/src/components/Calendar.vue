@@ -3,6 +3,7 @@ import '@fullcalendar/core/vdom';
 import FullCalendar from '@fullcalendar/vue';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { isMobile } from 'mobile-device-detect';
 
 export default {
   props: {
@@ -23,15 +24,22 @@ export default {
     };
   },
   methods: {
+    // fill the calendar with events
     refresh(deadline) {
       const cal = deadline.map(({ id, name: title, time: start }) => ({ id, title, start }));
       this.calendarOptions.events = cal;
     },
+    // handle click on the calendar (interactive)
     handleEventClick(event) {
-      // console.log(event.event.id);
       this.$parent.$bvModal.show('update-modal');
       this.$parent.editDeadline(event.event.id);
     },
+  },
+  created() {
+    // change view for mobile device
+    if (isMobile) {
+      this.calendarOptions.initialView = 'dayGridDay';
+    }
   },
 };
 </script>

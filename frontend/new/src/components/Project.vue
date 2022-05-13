@@ -2,19 +2,14 @@
 <template>
   <q-page class="q-pa-sm">
       <b-navbar toggleable="lg" type="Dark" variant="Primary">
-    <!-- <b style="word-space:4em">&nbsp;&nbsp;</b> -->
-    <!-- <b-navbar-brand href="#">DDL Manager</b-navbar-brand> -->
-    <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
-    <!-- <b-collapse id="nav-collapse" is-nav> -->
       <b-navbar-nav>
+
+        <!-- navbar item -->
         <b-nav-item href="/project">Project</b-nav-item>
         <b-nav-item href="/deadline">Deadline</b-nav-item>
-      <!-- </b-navbar-nav> -->
-
-      <!-- Right aligned nav items -->
-      <!-- <b-navbar-nav class="ml-auto"> -->
         <b-nav-item-dropdown>
-          <!-- Using 'button-content' slot -->
+
+        <!-- Dropdown item -->
           <template #button-content>
             <em>User</em>
           </template>
@@ -23,9 +18,10 @@
           <b-dropdown-item href="/admin">Admin</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-    <!-- </b-collapse> -->
   </b-navbar>
   <hr><br>
+    
+    <!-- Gantt graph -->
     <gantt-elastic
       :options="options"
       :tasks="tasks"
@@ -35,6 +31,8 @@
     >
       <gantt-header slot="header"></gantt-header>
     </gantt-elastic>
+
+
     <div class="q-mt-md" />
     <q-btn @click="addTask" icon="mdi-plus" label="Add task" />
   </q-page>
@@ -48,7 +46,7 @@ import GanttElastic from 'gantt-elastic';
 import GanttHeader from 'gantt-elastic-header';
 import dayjs from 'dayjs';
 
-// just helper to get current dates
+// get current dates
 function getDate(hours) {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -69,7 +67,7 @@ const tasks = [
     id: 1,
     label: 'Make some noise',
     user:
-      '<a href="https://www.google.com/search?q=John+Doe" target="_blank" style="color:#0077c0;">Liu Che</a>',
+      '<a href="mailto:liuche@gmail.com">Liu Che</a>',
     start: getDate(-24 * 5),
     duration: 15 * 24 * 60 * 60 * 1000,
     percent: 85,
@@ -79,7 +77,7 @@ const tasks = [
     id: 2,
     label: 'With great power comes great responsibility',
     user:
-      '<a href="https://www.google.com/search?q=Peter+Parker" target="_blank" style="color:#0077c0;">Wang Wojian</a>',
+      '<a href="mailto:wojian@gmail.com">Wang Wojian</a>',
     parentId: 1,
     start: getDate(-24 * 4),
     duration: 4 * 24 * 60 * 60 * 1000,

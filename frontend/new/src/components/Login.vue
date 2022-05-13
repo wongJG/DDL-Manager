@@ -1,13 +1,14 @@
 <template>
 <div class="background">
   <div class="TheLogin" align="center">
-  <b-card
-      style="max-width: 540px;"
-      title="Login"
-    >
-    <!-- <h1>Login</h1> -->
+  <!-- Card view -->
+  <b-card style="max-width: 540px;" title="Login">
     <br>
+
+  <!-- Show message (when enabled) -->
     <alert :message=message v-if="showMessage"></alert>
+    
+    <!-- Input form -->
     <div>
       <b-form-input id="form-name-input"
                         type="text"
@@ -27,9 +28,9 @@
       <b style="word-space:2em">&nbsp;&nbsp;</b>
       <b-button variant="outline-primary" @click="register">Register</b-button>
     </div>
+  
     </b-card>
   </div>
-  <!-- <img :src="imgSrc" width="100%" height="100%" alt="" /> -->
   </div>
 </template>
 
@@ -46,13 +47,13 @@ export default {
       userPassword: '',
       showMessage: false,
       message: '',
-      // imgSrc: require('../../assets/images/login.jpg')
     };
   },
   components: {
     alert: Alert,
   },
   methods: {
+    // forward login request to back-end
     logIn() {
       const path = 'api/login';
       const payload = {
@@ -74,6 +75,7 @@ export default {
           console.log(error);
         });
     },
+    // Jump to register page
     register() {
       this.$router.push('/Register');
     },
